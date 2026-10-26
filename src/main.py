@@ -8,7 +8,7 @@ import sys
 
 from parser import fetch_content, parse_packages, get_direct_dependencies
 from graph import build_graph, load_test_graph
-
+from load_order import topological_sort
 
 def parse_args():
     """Разбирает аргументы командной строки."""
@@ -66,10 +66,17 @@ def main():
         print("Граф пуст. Возможно, пакет не найден или у него нет зависимостей.")
         return
 
+    print("\nПорядок загрузки")
+    load_order = topological_sort(packages)
+    if load_order is None:
+        print("В графе обнаружен цикл! Порядок загрузки определить невозможно.")
+    else:
+        for i, pkg in enumerate(load_order, 1):
+            print(f"{i}. {pkg}")
+    
     print("\nРезультат (список зависимостей):")
     for parent, child in edges:
         print(f"{parent} -> {child}")
-
 
 if __name__ == "__main__":
     main()
