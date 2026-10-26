@@ -1,0 +1,22 @@
+Package: jq
+Architecture: amd64
+Version: 1.6-2.1ubuntu3
+Depends: libc6 (>= 2.34), libjq1 (= 1.6-2.1ubuntu3)
+Description: lightweight and flexible command-line JSON processor
+
+Package: libjq1
+Architecture: amd64
+Version: 1.6-2.1ubuntu3
+Depends: libc6 (>= 2.34), libonig5 (>= 6.8.1-1)
+Description: lightweight and flexible command-line JSON processor - shared library
+
+Package: libc6
+Architecture: amd64
+Version: 2.35-0ubuntu3.1
+Description: GNU C Library
+
+Package: libonig5
+Architecture: amd64
+Version: 6.9.7.1-2build1
+Depends: libc6 (>= 2.34)
+Description: regular expressions library
