@@ -9,6 +9,7 @@ import sys
 from parser import fetch_content, parse_packages, get_direct_dependencies
 from graph import build_graph, load_test_graph
 from load_order import topological_sort
+from viz import generate_d2_code, save_d2_and_render
 
 def parse_args():
     """Разбирает аргументы командной строки."""
@@ -77,6 +78,10 @@ def main():
     print("\nРезультат (список зависимостей):")
     for parent, child in edges:
         print(f"{parent} -> {child}")
+
+    print("\nВизуализация")
+    d2_code = generate_d2_code(edges)
+    save_d2_and_render(d2_code, args.output)
 
 if __name__ == "__main__":
     main()
