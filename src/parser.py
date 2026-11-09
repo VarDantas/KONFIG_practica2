@@ -1,6 +1,5 @@
 """
 Парсер файлов Packages для Ubuntu.
-Этап 2: Сбор данных о прямых зависимостях.
 """
 
 import gzip
@@ -8,24 +7,35 @@ import re
 import urllib.request
 
 
+def _load_from_url(url):
+    """Скачивает данные по URL."""
+    try:
+        with urllib.request.urlopen(url) as response:
+            return response.read()
+    except Exception as error:
+        print(f"Ошибка при скачивании: {error}")
+        return None
+
+
+def _load_from_file(path):
+    """Читает данные из локального файла."""
+    try:
+        with open(path, "rb") as file:
+            return file.read()
+    except Exception as error:
+        print(f"Ошибка при чтении файла: {error}")
+        return None
+
+
 def fetch_content(repo_url, mode):
-    """
-    Получает текст файла Packages.
-    """
+    """Получает текст файла Packages."""
     if mode == "url":
-        try:
-            with urllib.request.urlopen(repo_url) as response:
-                data = response.read()
-        except Exception as error:
-            print(f"Ошибка при скачивании: {error}")
-            return None
+        data = _load_from_url(repo_url)
     else:
-        try:
-            with open(repo_url, "rb") as file:
-                data = file.read()
-        except Exception as error:
-            print(f"Ошибка при чтении файла: {error}")
-            return None
+        data = _load_from_file(repo_url)
+
+    if data is None:
+        return None
 
     if repo_url.endswith(".gz"):
         try:
@@ -42,9 +52,7 @@ def fetch_content(repo_url, mode):
 
 
 def clean_dependency(dep):
-    """
-    Очищает строку зависимости от версий и альтернатив.
-    """
+    """Очищает строку зависимости от версий и альтернатив."""
     dep = dep.split("|")[0].strip()
     dep = re.sub(r"\(.*\)", "", dep).strip()
     dep = re.sub(r"\[.*\]", "", dep).strip()
@@ -52,9 +60,7 @@ def clean_dependency(dep):
 
 
 def parse_packages(text):
-    """
-    Разбирает текст Packages на словарь {пакет: [зависимости]}.
-    """
+    """Разбирает текст Packages на словарь."""
     packages = {}
     current_package = None
     current_deps = []
@@ -78,14 +84,11 @@ def parse_packages(text):
 
     if current_package:
         packages[current_package] = current_deps
-
     return packages
 
 
 def get_direct_dependencies(package_name, packages):
-    """
-    Возвращает список прямых зависимостей для указанного пакета.
-    """
+    """Возвращает список прямых зависимостей."""
     if package_name not in packages:
         return None
     return packages[package_name]

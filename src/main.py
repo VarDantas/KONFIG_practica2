@@ -1,24 +1,49 @@
 """
 Инструмент визуализации графа зависимостей.
-Этап 3: Построение графа (BFS с рекурсией).
+Этап 5: Визуализация.
 """
 
 import argparse
 import sys
 
-from parser import fetch_content, parse_packages, get_direct_dependencies
+from parser import fetch_content, parse_packages
 from graph import build_graph, load_test_graph
 from load_order import topological_sort
 from viz import generate_d2_code, save_d2_and_render
 
+
 def parse_args():
     """Разбирает аргументы командной строки."""
-    parser = argparse.ArgumentParser(description="Инструмент визуализации графа зависимостей")
-    parser.add_argument("--package", required=True, help="Имя анализируемого пакета")
-    parser.add_argument("--repo", required=True, help="URL-адрес или путь к файлу")
-    parser.add_argument("--mode", choices=["url", "file"], default="url", help="Режим работы")
-    parser.add_argument("--output", default="graph.png", help="Имя файла для картинки")
-    parser.add_argument("--depth", type=int, default=3, help="Максимальная глубина")
+    parser = argparse.ArgumentParser(
+        description="Инструмент визуализации графа зависимостей"
+    )
+    parser.add_argument(
+        "--package",
+        required=True,
+        help="Имя анализируемого пакета"
+    )
+    parser.add_argument(
+        "--repo",
+        required=True,
+        help="URL-адрес или путь к файлу"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["url", "file"],
+        default="url",
+        help="Режим работы"
+    )
+    parser.add_argument(
+        "--output",
+        default="graph.png",
+        help="Имя файла для картинки"
+    )
+    parser.add_argument(
+        "--depth",
+        type=int,
+        default=3,
+        help="Максимальная глубина"
+    )
     return parser.parse_args()
 
 
@@ -60,28 +85,31 @@ def main():
             sys.exit(1)
         packages = parse_packages(content)
 
-    print(f"\nСтроим граф для пакета '{args.package}' с глубиной {args.depth}...")
+    print(f"\nСтроим граф для пакета '{args.package}' "
+          f"с глубиной {args.depth}...")
     edges = build_graph(args.package, packages, args.depth)
 
     if not edges:
-        print("Граф пуст. Возможно, пакет не найден или у него нет зависимостей.")
+        print("Граф пуст.")
         return
 
-    print("\nПорядок загрузки")
+    print("\n=== Порядок загрузки ===")
     load_order = topological_sort(packages)
     if load_order is None:
-        print("В графе обнаружен цикл! Порядок загрузки определить невозможно.")
+        print("В графе обнаружен цикл! "
+              "Порядок загрузки определить невозможно.")
     else:
         for i, pkg in enumerate(load_order, 1):
             print(f"{i}. {pkg}")
-    
+
     print("\nРезультат (список зависимостей):")
     for parent, child in edges:
         print(f"{parent} -> {child}")
 
-    print("\nВизуализация")
+    print("\n=== Визуализация ===")
     d2_code = generate_d2_code(edges)
     save_d2_and_render(d2_code, args.output)
+
 
 if __name__ == "__main__":
     main()

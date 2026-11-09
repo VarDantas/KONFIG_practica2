@@ -55,7 +55,7 @@ save_d2_and_render(d2_code, output_png) — сохраняет D2, генери�
 ./run.sh --package jq --repo http://archive.ubuntu.com/ubuntu/dists/jammy/main/binary-amd64/Packages.gz --mode url
 
 Запуск в тестовом режиме (чтение графа из файла):
-./run.sh --package A --repo data/test_graph.txt --mode file --depth 3 --output graph_test.png
+./run.sh --package A --repo tests/test_graph.txt --mode file --depth 3 --output graph_test.png
 
 
 Примеры использования
@@ -64,7 +64,7 @@ save_d2_and_render(d2_code, output_png) — сохраняет D2, генери�
 
     Параметры запуска:
     package: A
-    repo: data/test_graph.txt
+    repo: tests/test_graph.txt
     mode: file
     output: graph_test.png
     depth: 3
@@ -105,5 +105,4 @@ sudo apt install librsvg2-bin
 
 Тестирование
 
-В папке data/ находится тестовый граф test_graph.txt.
-В папке tests/ будут добавлены юнит-тесты.
+В папке tests/ находится тестовый граф test_graph.txt.
